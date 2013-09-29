@@ -9,6 +9,8 @@ import ch.jessex.tttaas.core.model.Player;
 import ch.jessex.tttaas.core.model.State;
 import com.google.common.base.Optional;
 import com.google.common.collect.ImmutableList;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Provides utilities for operating a {@link Game}.
@@ -17,6 +19,8 @@ import com.google.common.collect.ImmutableList;
  * @since 0.0.1
  */
 public final class Mover {
+    private static final Logger LOG = LoggerFactory.getLogger(Mover.class);
+
     private static final short MAX_MOVES = 9;
     private static final short FIRST_POSSIBLE_WIN = 5;
 
@@ -29,6 +33,7 @@ public final class Mover {
      */
     public static Optional<Move.InvalidityReason> validate(Move move, Game game) {
         if (State.ONGOING != game.getState()) {
+            LOG.debug("Move [{}] in game [{}] invalid: game already complete", move.getId(), game.getId());
             return Optional.of(new Move.InvalidityReason("Game [%d] already completed", game.getId()));
         }
 
@@ -37,10 +42,12 @@ public final class Mover {
         Optional<Player> optionalPlayer = game.getBoard().getPlayerAtPosition(x, y);
 
         if (optionalPlayer.isPresent()) {
+            LOG.debug("Move [{}] in game [{}] invalid: player already at position [{}, {}]", move.getId(), game.getId(), x, y);
             return Optional.of(new Move.InvalidityReason("Player %s already at coordinates (%d, %d) in game [%d]",
                     optionalPlayer.get().getLetter(), x, y, game.getId()));
         }
 
+        LOG.debug("Move [{}] to square [{}, {}] in game [{}] is valid", move.getId(), x, y, game.getId());
         return Optional.absent();
     }
 
@@ -56,6 +63,9 @@ public final class Mover {
         List<Move> moves = ImmutableList.<Move>builder().addAll(game.getMoves()).add(move).build();
         Board board = game.getBoard().withNewMove(move);
         State state = evaluate(board, moves, move);
+
+        LOG.debug("Move [{}] to square [{}, {}] leads to state of {} for game [{}]",
+                move.getId(), move.getXCoordinate(), move.getYCoordinate(), state, game.getId());
 
         return new Game(game.getId(), state, board, moves);
     }

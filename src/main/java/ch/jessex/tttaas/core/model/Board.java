@@ -10,7 +10,18 @@ import org.apache.commons.lang.builder.ToStringBuilder;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 /**
- * Models the current state of the board.
+ * Models the current state of the board. The squares of the board are modeled as a 3x3 two dimensional array of
+ * {@link Player Players}. The column of a square is denoted by its x coordinate, and a row by its y coordinate. This looks
+ * roughly like:
+ *
+ *     x0   x1   x2
+ * y0     |    |
+ *    ----+----+----
+ * y1     |    |
+ *    ----+----+----
+ * y2     |    |
+ *
+ * An empty board is filled with {@code null} values in each square; the board will always have dimensions of 3x3.
  *
  * @author jessex
  * @since 0.0.1
@@ -20,7 +31,7 @@ public final class Board {
     private final Player[][] squares;
 
     /**
-     * Constructs a blank board with no squares yet occupied.
+     * Constructs a blank board with no squares yet occupied. Each element will be initialized to {@code null}.
      */
     public Board() {
         this.squares = new Player[3][3];
