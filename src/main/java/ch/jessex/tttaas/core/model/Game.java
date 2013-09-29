@@ -1,0 +1,58 @@
+package ch.jessex.tttaas.core.model;
+
+import java.util.List;
+
+import com.google.common.collect.ImmutableList;
+
+import static com.google.common.base.Preconditions.checkNotNull;
+
+/**
+ * Models an individual game of tic tac toe.
+ *
+ * @author jessex
+ * @since 0.0.1
+ */
+public class Game {
+    private final long id;
+    private final State state;
+    private final Board board;
+    private final List<Move> moves;
+
+    /**
+     * Constructs a new game without any {@link Move moves}.
+     *
+     * @param id the id of the game
+     */
+    public Game(long id) {
+        this(id, State.ONGOING, new Board(), null);
+    }
+
+    public Game(long id, State state, Board board, List<Move> moves) {
+        this.id = id;
+        this.state = checkNotNull(state, "state cannot be null");
+        this.board = checkNotNull(board, "board cannot be null");
+
+        if (moves == null) {
+            this.moves = ImmutableList.of();
+        }
+        else {
+            this.moves = ImmutableList.copyOf(moves);
+        }
+    }
+
+    public long getId() {
+        return id;
+    }
+
+    public State getState() {
+        return state;
+    }
+
+    public Board getBoard() {
+        return board;
+    }
+
+    public List<Move> getMoves() {
+        return moves;
+    }
+}
