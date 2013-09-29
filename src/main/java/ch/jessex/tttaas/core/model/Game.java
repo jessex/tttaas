@@ -3,6 +3,9 @@ package ch.jessex.tttaas.core.model;
 import java.util.List;
 
 import com.google.common.collect.ImmutableList;
+import org.apache.commons.lang.builder.EqualsBuilder;
+import org.apache.commons.lang.builder.HashCodeBuilder;
+import org.apache.commons.lang.builder.ToStringBuilder;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
@@ -54,5 +57,20 @@ public class Game {
 
     public List<Move> getMoves() {
         return moves;
+    }
+
+    @Override
+    public int hashCode() {
+        return HashCodeBuilder.reflectionHashCode(this);
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        return EqualsBuilder.reflectionEquals(this, o);
+    }
+
+    @Override
+    public String toString() {
+        return ToStringBuilder.reflectionToString(this);
     }
 }

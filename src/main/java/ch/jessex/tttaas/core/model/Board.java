@@ -3,6 +3,9 @@ package ch.jessex.tttaas.core.model;
 import java.util.Arrays;
 
 import com.google.common.base.Optional;
+import org.apache.commons.lang.builder.EqualsBuilder;
+import org.apache.commons.lang.builder.HashCodeBuilder;
+import org.apache.commons.lang.builder.ToStringBuilder;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
@@ -55,5 +58,20 @@ public final class Board {
 
     public Player[][] getSquares() {
         return this.squares;
+    }
+
+    @Override
+    public int hashCode() {
+        return HashCodeBuilder.reflectionHashCode(this);
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        return EqualsBuilder.reflectionEquals(this, o);
+    }
+
+    @Override
+    public String toString() {
+        return ToStringBuilder.reflectionToString(this);
     }
 }
