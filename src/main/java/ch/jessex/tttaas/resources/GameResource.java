@@ -22,16 +22,16 @@ import org.slf4j.LoggerFactory;
 public class GameResource {
     private static final Logger LOG = LoggerFactory.getLogger(GameResource.class);
 
-    private final AtomicLong idCounter;
+    private final AtomicLong gameCounter;
 
     public GameResource() {
-        this.idCounter = new AtomicLong();
+        this.gameCounter = new AtomicLong();
     }
 
     @GET
     @Timed
     public Game getNewGame() {
-        Game game = new Game(this.idCounter.incrementAndGet());
+        Game game = new Game(this.gameCounter.incrementAndGet());
         LOG.info("Creating new game with id [{}]", game.getId());
         return game;
     }

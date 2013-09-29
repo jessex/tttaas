@@ -1,6 +1,7 @@
 package ch.jessex.tttaas;
 
 import ch.jessex.tttaas.resources.GameResource;
+import ch.jessex.tttaas.resources.MoveResource;
 import com.yammer.dropwizard.Service;
 import com.yammer.dropwizard.config.Bootstrap;
 import com.yammer.dropwizard.config.Environment;
@@ -25,5 +26,6 @@ public class TttaasService extends Service<TttaasConfiguration> {
     @Override
     public void run(TttaasConfiguration tttaasConfiguration, Environment environment) throws Exception {
         environment.addResource(new GameResource());
+        environment.addResource(new MoveResource());
     }
 }
