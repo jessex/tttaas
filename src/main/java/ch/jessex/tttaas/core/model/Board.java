@@ -55,7 +55,7 @@ public final class Board {
         for (int i = 0; i < this.squares.length; i++) {
             newSquares[i] = Arrays.copyOf(this.squares[i], 3);
         }
-        newSquares[move.getYCoordinate()][move.getXCoordinate()] = move.getPlayer();
+        newSquares[move.getY()][move.getX()] = move.getPlayer();
 
         return new Board(newSquares);
     }

@@ -37,8 +37,8 @@ public final class Mover {
             return Optional.of(new Move.InvalidityReason("Game [%d] already completed", game.getId()));
         }
 
-        int x = move.getXCoordinate();
-        int y = move.getYCoordinate();
+        int x = move.getX();
+        int y = move.getY();
         Optional<Player> optionalPlayer = game.getBoard().getPlayerAtPosition(x, y);
 
         if (optionalPlayer.isPresent()) {
@@ -65,7 +65,7 @@ public final class Mover {
         State state = evaluate(board, moves, move);
 
         LOG.debug("Move [{}] to square [{}, {}] leads to state of {} for game [{}]",
-                move.getId(), move.getXCoordinate(), move.getYCoordinate(), state, game.getId());
+                move.getId(), move.getX(), move.getY(), state, game.getId());
 
         return new Game(game.getId(), state, board, moves);
     }
@@ -84,8 +84,8 @@ public final class Mover {
         }
 
         int n = 3;
-        int x = mostRecent.getXCoordinate();
-        int y = mostRecent.getYCoordinate();
+        int x = mostRecent.getX();
+        int y = mostRecent.getY();
         Player[][] squares = board.getSquares();
 
         Player player = mostRecent.getPlayer();
