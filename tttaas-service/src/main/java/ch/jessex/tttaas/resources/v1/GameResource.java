@@ -1,4 +1,4 @@
-package ch.jessex.tttaas.resources;
+package ch.jessex.tttaas.resources.v1;
 
 import java.util.concurrent.atomic.AtomicLong;
 import javax.ws.rs.GET;
@@ -17,7 +17,7 @@ import org.slf4j.LoggerFactory;
  * @author jessex
  * @since 0.0.1
  */
-@Path("/game")
+@Path("/v1/game")
 @Produces(MediaType.APPLICATION_JSON)
 public class GameResource {
     private static final Logger LOG = LoggerFactory.getLogger(GameResource.class);

@@ -1,4 +1,4 @@
-package ch.jessex.tttaas.resources;
+package ch.jessex.tttaas.resources.v1;
 
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Response;

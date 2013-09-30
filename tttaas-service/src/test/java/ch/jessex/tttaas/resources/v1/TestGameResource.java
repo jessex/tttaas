@@ -1,4 +1,4 @@
-package ch.jessex.tttaas.resources;
+package ch.jessex.tttaas.resources.v1;
 
 import ch.jessex.tttaas.api.v1.Game;
 import org.junit.Test;

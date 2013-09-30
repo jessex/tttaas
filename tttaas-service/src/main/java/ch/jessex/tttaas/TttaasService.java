@@ -1,7 +1,7 @@
 package ch.jessex.tttaas;
 
-import ch.jessex.tttaas.resources.GameResource;
-import ch.jessex.tttaas.resources.MoveResource;
+import ch.jessex.tttaas.resources.v1.GameResource;
+import ch.jessex.tttaas.resources.v1.MoveResource;
 import com.yammer.dropwizard.Service;
 import com.yammer.dropwizard.config.Bootstrap;
 import com.yammer.dropwizard.config.Environment;
