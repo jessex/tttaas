@@ -12,8 +12,9 @@ import javax.ws.rs.core.Response;
 import ch.jessex.tttaas.core.Mover;
 import ch.jessex.tttaas.core.model.Game;
 import ch.jessex.tttaas.core.model.Move;
-import ch.jessex.tttaas.core.model.Player;
 import com.google.common.base.Optional;
+import com.yammer.dropwizard.jersey.params.IntParam;
+import com.yammer.dropwizard.jersey.params.LongParam;
 import com.yammer.metrics.annotation.Timed;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -37,18 +38,14 @@ public class MoveResource {
 
     @POST
     @Timed
-    public Response postMove(@PathParam("gameId") long gameId,
-                             @QueryParam("player") Optional<String> player,
-                             @QueryParam("x") Optional<Integer> x,
-                             @QueryParam("y") Optional<Integer> y) {
-
-        // Once support for JDBI exists, retrieve the game by gameId and use that here. For now...
-        Game game = new Game(gameId);
-
+    public Response postMove(@PathParam("gameId") LongParam gameId,
+                             @QueryParam("player") Optional<PlayerParam> player,
+                             @QueryParam("x") Optional<IntParam> x,
+                             @QueryParam("y") Optional<IntParam> y) {
         StringBuilder stringBuilder = new StringBuilder();
         if (!player.isPresent()) {
             LOG.debug("postMove call for game [{}] made without player parameter", gameId);
-            stringBuilder.append("Must provide 'player' query parameter with value 'X' or 'O'. ");
+            stringBuilder.append("Must provide 'player' query parameter with value X or O. ");
         }
         if (!x.isPresent()) {
             LOG.debug("postMove call for game [{}] made without x parameter", gameId);
@@ -60,33 +57,33 @@ public class MoveResource {
         }
 
         if (stringBuilder.length() != 0) {
-            return Response.status(Response.Status.BAD_REQUEST)
-                           .entity(stringBuilder.toString())
-                           .type(MediaType.TEXT_PLAIN_TYPE)
-                           .build();
+            return badRequest(stringBuilder.toString(), MediaType.TEXT_PLAIN_TYPE);
         }
 
-        Player realPlayer;
+        // Once support for JDBI exists, retrieve the game by gameId and use that here. For now...
+        Game game = new Game(gameId.get());
+
+        Move move;
         try {
-            realPlayer = Player.valueOf(player.get().toUpperCase());
+            move = new Move(this.moveCounter.incrementAndGet(), player.get().get(), x.get().get(), y.get().get());
         }
-        catch (IllegalArgumentException ex) {
-            LOG.debug("postMove call for game [{}] made bad player parameter '{}'", gameId, player);
-            return Response.status(Response.Status.BAD_REQUEST)
-                           .entity("Value specified by 'player' query parameter must be 'X' or 'O'")
-                           .type(MediaType.TEXT_PLAIN_TYPE)
-                           .build();
+        catch(IllegalArgumentException ex) {
+            return badRequest(ex.getMessage(), MediaType.TEXT_PLAIN_TYPE);
         }
 
-        Move move = new Move(this.moveCounter.incrementAndGet(), realPlayer, x.get(), y.get());
         Optional<Move.InvalidityReason> optionalReason = Mover.validate(move, game);
         if (optionalReason.isPresent()) {
-            return Response.status(Response.Status.BAD_REQUEST)
-                           .entity(optionalReason.get())
-                           .build();
+            return badRequest(optionalReason.get(), MediaType.APPLICATION_JSON_TYPE);
         }
 
         Game newGame = Mover.move(move, game);
         return Response.ok(newGame).build();
+    }
+
+    private Response badRequest(Object entity, MediaType mediaType) {
+        return Response.status(Response.Status.BAD_REQUEST)
+                       .entity(entity)
+                       .type(mediaType)
+                       .build();
     }
 }
