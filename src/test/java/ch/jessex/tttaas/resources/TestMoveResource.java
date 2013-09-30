@@ -1,5 +1,6 @@
 package ch.jessex.tttaas.resources;
 
+import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Response;
 
 import ch.jessex.tttaas.core.Mover;
@@ -31,61 +32,80 @@ public class TestMoveResource {
 
     @Test
     public void testPostMoveMissingPlayer() {
-        Response response = this.moveResource.postMove(new LongParam("4"), Optional.<PlayerParam>absent(),
-                Optional.of(new IntParam("2")), Optional.of(new IntParam("2")));
-
-        assertResponse(response, Response.Status.BAD_REQUEST, "Must provide 'player' query parameter with value X or O. ");
+        try {
+            this.moveResource.postMove(new LongParam("4"), Optional.<PlayerParam>absent(),
+                    Optional.of(new IntParam("2")), Optional.of(new IntParam("2")));
+        }
+        catch (WebApplicationException ex) {
+            assertResponse(ex.getResponse(), Response.Status.BAD_REQUEST,
+                    "Must provide 'player' query parameter with value X or O. ");
+        }
     }
 
     @Test
     public void testPostMoveMissingX() {
-        Response response = this.moveResource.postMove(new LongParam("4"), Optional.of(new PlayerParam("x")),
-                Optional.<IntParam>absent(), Optional.of(new IntParam("2")));
-
-        assertResponse(response, Response.Status.BAD_REQUEST, "Must provide 'x' query parameter with x coordinate of move. ");
+        try {
+            this.moveResource.postMove(new LongParam("4"), Optional.of(new PlayerParam("x")),
+                    Optional.<IntParam>absent(), Optional.of(new IntParam("2")));
+        }
+        catch (WebApplicationException ex) {
+            assertResponse(ex.getResponse(), Response.Status.BAD_REQUEST,
+                    "Must provide 'x' query parameter with x coordinate of move. ");
+        }
     }
 
     @Test
     public void testPostMoveMissingY() {
-        Response response = this.moveResource.postMove(new LongParam("4"), Optional.of(new PlayerParam("x")),
-                Optional.of(new IntParam("2")), Optional.<IntParam>absent());
-
-        assertResponse(response, Response.Status.BAD_REQUEST, "Must provide 'y' query parameter with y coordinate of move. ");
+        try {
+            this.moveResource.postMove(new LongParam("4"), Optional.of(new PlayerParam("x")),
+                    Optional.of(new IntParam("2")), Optional.<IntParam>absent());
+        }
+        catch (WebApplicationException ex) {
+            assertResponse(ex.getResponse(), Response.Status.BAD_REQUEST,
+                    "Must provide 'y' query parameter with y coordinate of move. ");
+        }
     }
 
     @Test
     public void testPostMissingAll() {
-        Response response = this.moveResource.postMove(new LongParam("4"), Optional.<PlayerParam>absent(),
-                Optional.<IntParam>absent(), Optional.<IntParam>absent());
-
-        assertResponse(response, Response.Status.BAD_REQUEST, "Must provide 'player' query parameter with value X or O. " +
-                "Must provide 'x' query parameter with x coordinate of move. " +
-                "Must provide 'y' query parameter with y coordinate of move. ");
+        try {
+            this.moveResource.postMove(new LongParam("4"), Optional.<PlayerParam>absent(),
+                    Optional.<IntParam>absent(), Optional.<IntParam>absent());
+        }
+        catch (WebApplicationException ex) {
+            assertResponse(ex.getResponse(), Response.Status.BAD_REQUEST,
+                    "Must provide 'player' query parameter with value X or O. " +
+                    "Must provide 'x' query parameter with x coordinate of move. " +
+                    "Must provide 'y' query parameter with y coordinate of move. ");
+        }
     }
 
     @Test
     public void testPostMoveBadCoordinates() {
-        Response response = this.moveResource.postMove(new LongParam("4"), Optional.of(new PlayerParam("O")),
-                Optional.of(new IntParam("3")), Optional.of(new IntParam("2")));
+        try {
+            this.moveResource.postMove(new LongParam("4"), Optional.of(new PlayerParam("O")),
+                    Optional.of(new IntParam("3")), Optional.of(new IntParam("2")));
+        }
+        catch (WebApplicationException ex) {
+            assertResponse(ex.getResponse(), Response.Status.BAD_REQUEST, "x must be between 0 and 2 (inclusive)");
+        }
 
-        assertResponse(response, Response.Status.BAD_REQUEST, "x must be between 0 and 2 (inclusive)");
-
-        response = this.moveResource.postMove(new LongParam("4"), Optional.of(new PlayerParam("X")),
-                Optional.of(new IntParam("0")), Optional.of(new IntParam("-1")));
-
-        assertResponse(response, Response.Status.BAD_REQUEST, "y must be between 0 and 2 (inclusive)");
+        try {
+            this.moveResource.postMove(new LongParam("4"), Optional.of(new PlayerParam("X")),
+                    Optional.of(new IntParam("0")), Optional.of(new IntParam("-1")));
+        }
+        catch (WebApplicationException ex) {
+            assertResponse(ex.getResponse(), Response.Status.BAD_REQUEST, "y must be between 0 and 2 (inclusive)");
+        }
     }
 
     @Test
     public void testPostHappyPath() {
-        Response response = this.moveResource.postMove(new LongParam("4"), Optional.of(new PlayerParam("O")),
+        Game game = this.moveResource.postMove(new LongParam("4"), Optional.of(new PlayerParam("O")),
                 Optional.of(new IntParam("2")), Optional.of(new IntParam("2")));
 
-        Move move = new Move(1L, Player.O, 2, 2);
-        Game game = new Game(4L);
-        game = Mover.move(move, game);
-
-        assertResponse(response, Response.Status.OK, game);
+        Game expectedGame = Mover.move(new Move(1L, Player.O, 2, 2), new Game(4L));
+        assertEquals("Unexpected game response", expectedGame, game);
     }
 
     private void assertResponse(Response response, Response.Status expectedStatus, Object expectedEntity) {
