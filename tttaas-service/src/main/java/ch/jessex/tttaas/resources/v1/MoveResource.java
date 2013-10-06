@@ -17,6 +17,8 @@ import ch.jessex.tttaas.core.Mover;
 import com.google.common.base.Optional;
 import com.yammer.dropwizard.jersey.params.LongParam;
 import com.yammer.metrics.annotation.Timed;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * The resource backing {@link Move}-related endpoints.
@@ -28,6 +30,7 @@ import com.yammer.metrics.annotation.Timed;
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
 public class MoveResource {
+    private static final Logger LOG = LoggerFactory.getLogger(MoveResource.class);
 
     /**
      * Applies the move described by the given query parameters--player, x, and y--ot the game with the given gameId
@@ -41,8 +44,11 @@ public class MoveResource {
     @Timed
     public Game postMove(@PathParam("gameId") LongParam gameId,
                          @Valid Move move) {
+        long id = gameId.get();
+        LOG.info("Attempting to post move [{}] to game with id [{}]", move, id);
+
         // Once support for JDBI exists, retrieve the game by gameId and use that here. For now...
-        Game game = new Game(gameId.get());
+        Game game = new Game(id);
 
         Optional<InvalidityReason> optionalReason = Mover.validate(move, game);
         if (optionalReason.isPresent()) {
