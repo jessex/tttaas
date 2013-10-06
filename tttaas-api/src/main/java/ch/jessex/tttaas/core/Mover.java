@@ -4,6 +4,7 @@ import java.util.List;
 
 import ch.jessex.tttaas.api.v1.Board;
 import ch.jessex.tttaas.api.v1.Game;
+import ch.jessex.tttaas.api.v1.InvalidityReason;
 import ch.jessex.tttaas.api.v1.Move;
 import ch.jessex.tttaas.api.v1.Player;
 import ch.jessex.tttaas.api.v1.State;
@@ -31,10 +32,10 @@ public final class Mover {
      * @param game the game to check the move on
      * @return an Optional containing an InvalidityReason if the move is invalid; an absent Optional otherwise
      */
-    public static Optional<Move.InvalidityReason> validate(Move move, Game game) {
+    public static Optional<InvalidityReason> validate(Move move, Game game) {
         if (State.ONGOING != game.getState()) {
-            LOG.debug("Move [{}] in game [{}] invalid: game already complete", move.getId(), game.getId());
-            return Optional.of(new Move.InvalidityReason("Game [%d] already completed", game.getId()));
+            LOG.debug("Move [{}] in game [{}] invalid: game already complete", move, game.getId());
+            return Optional.of(new InvalidityReason("Game [%d] already completed", game.getId()));
         }
 
         int x = move.getX();
@@ -42,12 +43,12 @@ public final class Mover {
         Optional<Player> optionalPlayer = game.getBoard().getPlayerAtPosition(x, y);
 
         if (optionalPlayer.isPresent()) {
-            LOG.debug("Move [{}] in game [{}] invalid: player already at position [{}, {}]", move.getId(), game.getId(), x, y);
-            return Optional.of(new Move.InvalidityReason("Player %s already at coordinates (%d, %d) in game [%d]",
+            LOG.debug("Move [{}] in game [{}] invalid: player already at position [{}, {}]", move, game.getId(), x, y);
+            return Optional.of(new InvalidityReason("Player %s already at coordinates (%d, %d) in game [%d]",
                     optionalPlayer.get().getLetter(), x, y, game.getId()));
         }
 
-        LOG.debug("Move [{}] to square [{}, {}] in game [{}] is valid", move.getId(), x, y, game.getId());
+        LOG.debug("Move [{}] to square [{}, {}] in game [{}] is valid", move, x, y, game.getId());
         return Optional.absent();
     }
 
@@ -64,8 +65,8 @@ public final class Mover {
         Board board = game.getBoard().withNewMove(move);
         State state = evaluate(board, moves, move);
 
-        LOG.debug("Move [{}] to square [{}, {}] leads to state of {} for game [{}]",
-                move.getId(), move.getX(), move.getY(), state, game.getId());
+        LOG.debug("Move [{}] leads to state of {} for game [{}]",
+                move, state, game.getId());
 
         return new Game(game.getId(), state, board, moves);
     }
@@ -88,7 +89,7 @@ public final class Mover {
         int y = mostRecent.getY();
         Player[][] squares = board.getSquares();
 
-        Player player = mostRecent.getPlayer();
+        Player player = Player.valueOf(mostRecent.getPlayer());
         State victory = player == Player.X ? State.X_VICTORY : State.O_VICTORY;
 
         // Check row

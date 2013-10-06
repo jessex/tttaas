@@ -1,9 +1,14 @@
 package ch.jessex.tttaas.api.v1;
 
-import org.apache.commons.lang.StringUtils;
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.yammer.dropwizard.validation.ValidationMethod;
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.apache.commons.lang.builder.ToStringBuilder;
+import org.hibernate.validator.constraints.NotEmpty;
+import org.hibernate.validator.constraints.Range;
 
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
@@ -15,49 +20,44 @@ import static com.google.common.base.Preconditions.checkNotNull;
  * @since 0.0.1
  */
 public final class Move {
-    private final long id;
-    private final Player player;
+
+    @NotEmpty
+    private final String player;
+
+    @Range(min = 0, max = 2)
     private final int x;
+
+    @Range(min = 0, max = 2)
     private final int y;
-    private final InvalidityReason invalidityReason;
 
     /**
-     * Constructs a Move that is assumed to be valid.
-     * @param id the id of the move
-     * @param player the player making the move
-     * @param x the x coordinate of the move
-     * @param y the y coordinate of the move
+     * The json-specific constructor which assumes automatic, annotation-driven validation and allows for friendly error
+     * handling.
+     *
+     * @param player the player, as a case-insensitive string
+     * @param x the x coordinate
+     * @param y the y coordinate
      */
-    public Move(long id, Player player, int x, int y) {
-        this(id, player, x, y, null);
+    @JsonCreator
+    protected Move(@JsonProperty("player") String player,
+                   @JsonProperty("x") int x,
+                   @JsonProperty("y") int y) {
+        this.player = player.toUpperCase();
+        this.x = x;
+        this.y = y;
     }
 
-    public Move(long id, Player player, int x, int y, InvalidityReason invalidityReason) {
+    public Move(Player player, int x, int y) {
         checkArgument(x >= 0 && x <= 2, "x must be between 0 and 2 (inclusive)");
         checkArgument(y >= 0 && y <= 2, "y must be between 0 and 2 (inclusive)");
 
-        this.id = id;
-        this.player = checkNotNull(player, "player cannot be null");
+        this.player = checkNotNull(player, "player cannot be null").name();
         this.x = x;
         this.y = y;
-        this.invalidityReason = invalidityReason;
     }
 
-    /**
-     * Returns a new move with the given invalidity reason, otherwise identical to this move.
-     * @param invalidityReason the reason the move is invalid
-     * @return a copy of this move with an invalidity reason
-     */
-    public Move withInvalidityReason(InvalidityReason invalidityReason) {
-        return new Move(this.id, this.player, this.x, this.y,
-                checkNotNull(invalidityReason, "invalidityReason cannot be null"));
-    }
 
-    public long getId() {
-        return id;
-    }
-
-    public Player getPlayer() {
+    public String getPlayer() {
         return player;
     }
 
@@ -69,35 +69,10 @@ public final class Move {
         return y;
     }
 
-    /**
-     * @return the reason that this move was invalid; null if it was valid
-     */
-    public InvalidityReason getInvalidityReason() {
-        return invalidityReason;
-    }
-
-    /**
-     * The reason why some move is invalid.
-     *
-     * @author jessex
-     * @since 0.0.1
-     */
-    public static final class InvalidityReason {
-        private final String reason;
-
-        public InvalidityReason(String reason) {
-            checkArgument(!StringUtils.isBlank(reason), "reason cannot be blank, empty, or null");
-            this.reason = reason;
-        }
-
-        public InvalidityReason(String reason, Object... args) {
-            checkArgument(!StringUtils.isBlank(reason), "reason cannot be blank empty or null");
-            this.reason = String.format(reason, args);
-        }
-
-        public String getReason() {
-            return reason;
-        }
+    @JsonIgnore
+    @ValidationMethod(message="Player must be either X or O")
+    public boolean isValidPlayer() {
+        return Player.X.name().equals(this.player.toUpperCase()) || Player.O.name().equals(this.player.toUpperCase());
     }
 
     @Override
