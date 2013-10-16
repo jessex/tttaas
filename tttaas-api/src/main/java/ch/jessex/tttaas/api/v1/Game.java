@@ -2,6 +2,7 @@ package ch.jessex.tttaas.api.v1;
 
 import java.util.List;
 
+
 import com.google.common.collect.ImmutableList;
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
@@ -22,12 +23,10 @@ public class Game {
     private final List<Move> moves;
 
     /**
-     * Constructs a new game without any {@link Move moves}.
-     *
-     * @param id the id of the game
+     * Constructs a new game with no {@link Move moves} and with a dummy id that doesn't correspond to anything in the database.
      */
-    public Game(long id) {
-        this(id, State.ONGOING, new Board(), null);
+    public Game() {
+        this(0, State.ONGOING, new Board(), null);
     }
 
     public Game(long id, State state, Board board, List<Move> moves) {

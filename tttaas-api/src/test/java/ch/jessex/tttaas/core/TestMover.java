@@ -24,10 +24,10 @@ import static org.junit.Assert.assertTrue;
  * @since 0.0.1
  */
 public class TestMover {
-    private static final List<Move> MOVES = ImmutableList.of(new Move(Player.X, 2, 0),
-                                                             new Move(Player.O, 1, 1),
-                                                             new Move(Player.X, 0, 0),
-                                                             new Move(Player.O, 1, 2));
+    private static final List<Move> MOVES = ImmutableList.of(new Move(1L, Player.X, 2, 0),
+                                                             new Move(1L, Player.O, 1, 1),
+                                                             new Move(1L, Player.X, 0, 0),
+                                                             new Move(1L, Player.O, 1, 2));
 
     private static final Player[][] INCOMPLETE_SQUARES = {{Player.X, null, Player.X},
                                                           {null, Player.O, null},
@@ -42,7 +42,7 @@ public class TestMover {
     @Test
     public void testValidateGameComplete() {
         Game game = new Game(1L, State.CATS_GAME, FULL_BOARD, ImmutableList.<Move>of());
-        Move move = new Move(Player.X, 1, 1);
+        Move move = new Move(1L, Player.X, 1, 1);
 
         Optional<InvalidityReason> optionalReason = Mover.validate(move, game);
         assertTrue("Expected a reason why this move is invalid", optionalReason.isPresent());
@@ -53,7 +53,7 @@ public class TestMover {
     @Test
     public void testValidatePositionAlreadyTaken() {
         Game game = new Game(2L, State.ONGOING, INCOMPLETE_BOARD, MOVES);
-        Move move = new Move(Player.X, 2, 0);
+        Move move = new Move(2L, Player.X, 2, 0);
 
         Optional<InvalidityReason> optionalReason = Mover.validate(move, game);
         assertTrue("Expected a reason why this move is invalid", optionalReason.isPresent());
@@ -64,7 +64,7 @@ public class TestMover {
     @Test
     public void testValidateValid() {
         Game game = new Game(3L, State.ONGOING, INCOMPLETE_BOARD, MOVES);
-        Move move = new Move(Player.X, 0, 2);
+        Move move = new Move(3L, Player.X, 0, 2);
 
         Optional<InvalidityReason> optionalReason = Mover.validate(move, game);
         assertFalse("Expected no reason why this move is invalid", optionalReason.isPresent());
@@ -73,7 +73,7 @@ public class TestMover {
     @Test
     public void testMoveNotGameWinning() {
         Game game = new Game(4L, State.ONGOING, INCOMPLETE_BOARD, MOVES);
-        Move move = new Move(Player.X, 0, 1);
+        Move move = new Move(4L, Player.X, 0, 1);
 
         Game newGame = Mover.move(move, game);
         assertEquals("Expected game to keep id", game.getId(), newGame.getId());
@@ -86,7 +86,7 @@ public class TestMover {
     @Test
     public void testMoveGameWinningX() {
         Game game = new Game(4L, State.ONGOING, INCOMPLETE_BOARD, MOVES);
-        Move move = new Move(Player.X, 1, 0);
+        Move move = new Move(4L, Player.X, 1, 0);
 
         Game newGame = Mover.move(move, game);
         assertEquals("Expected game to keep id", game.getId(), newGame.getId());
@@ -99,7 +99,7 @@ public class TestMover {
     @Test
     public void testMoveGameWinningO() {
         Game game = new Game(4L, State.ONGOING, INCOMPLETE_BOARD, MOVES);
-        Move move = new Move(Player.O, 1, 0);
+        Move move = new Move(4L, Player.O, 1, 0);
 
         Game newGame = Mover.move(move, game);
         assertEquals("Expected game to keep id", game.getId(), newGame.getId());
@@ -114,17 +114,17 @@ public class TestMover {
         Player[][] almostFull = {{Player.O, Player.O, Player.X},
                                  {Player.X, Player.X, Player.O},
                                  {Player.O, null, Player.X}};
-        List<Move> moves = ImmutableList.of(new Move(Player.X, 1, 1),
-                                            new Move(Player.O, 0, 0),
-                                            new Move(Player.X, 0, 1),
-                                            new Move(Player.O, 2, 1),
-                                            new Move(Player.X, 2, 0),
-                                            new Move(Player.O, 0, 2),
-                                            new Move(Player.X, 2, 2),
-                                            new Move(Player.O, 1, 0));
+        List<Move> moves = ImmutableList.of(new Move(1L, Player.X, 1, 1),
+                                            new Move(1L, Player.O, 0, 0),
+                                            new Move(1L, Player.X, 0, 1),
+                                            new Move(1L, Player.O, 2, 1),
+                                            new Move(1L, Player.X, 2, 0),
+                                            new Move(1L, Player.O, 0, 2),
+                                            new Move(1L, Player.X, 2, 2),
+                                            new Move(1L, Player.O, 1, 0));
 
-        Game game = new Game(4L, State.ONGOING, new Board(almostFull), moves);
-        Move move = new Move(Player.X, 1, 2);
+        Game game = new Game(1L, State.ONGOING, new Board(almostFull), moves);
+        Move move = new Move(1L, Player.X, 1, 2);
 
         Game newGame = Mover.move(move, game);
         assertEquals("Expected game to keep id", game.getId(), newGame.getId());
@@ -136,8 +136,8 @@ public class TestMover {
 
     @Test
     public void testMoveFirstMove() {
-        Game game = new Game(5L);
-        Move move = new Move(Player.X, 1, 1);
+        Game game = new Game();
+        Move move = new Move(1L, Player.X, 1, 1);
 
         Game newGame = Mover.move(move, game);
         assertEquals("Expected game to keep id", game.getId(), newGame.getId());

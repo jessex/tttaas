@@ -21,6 +21,8 @@ import static com.google.common.base.Preconditions.checkNotNull;
  */
 public final class Move {
 
+    private final long gameId;
+
     @NotEmpty
     private final String player;
 
@@ -39,23 +41,29 @@ public final class Move {
      * @param y the y coordinate
      */
     @JsonCreator
-    protected Move(@JsonProperty("player") String player,
+    protected Move(@JsonProperty("gameId") long gameId,
+                   @JsonProperty("player") String player,
                    @JsonProperty("x") int x,
                    @JsonProperty("y") int y) {
+        this.gameId = gameId;
         this.player = player.toUpperCase();
         this.x = x;
         this.y = y;
     }
 
-    public Move(Player player, int x, int y) {
+    public Move(long gameId, Player player, int x, int y) {
         checkArgument(x >= 0 && x <= 2, "x must be between 0 and 2 (inclusive)");
         checkArgument(y >= 0 && y <= 2, "y must be between 0 and 2 (inclusive)");
 
+        this.gameId = gameId;
         this.player = checkNotNull(player, "player cannot be null").name();
         this.x = x;
         this.y = y;
     }
 
+    public long getGameId() {
+        return gameId;
+    }
 
     public String getPlayer() {
         return player;

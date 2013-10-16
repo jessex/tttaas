@@ -31,10 +31,10 @@ public class TestBoard {
     @Test
     public void testWithNewMove() {
         Board board = new Board(SQUARES);
-        Board newBoard = board.withNewMove(new Move(Player.X, 0, 2));
+        Board newBoard = board.withNewMove(new Move(1L, Player.X, 0, 2));
         assertEquals("Should have placed X at [0,2]", Player.X, newBoard.getPlayerAtPosition(0, 2).get());
 
-        newBoard = newBoard.withNewMove(new Move(Player.O, 2, 0));
+        newBoard = newBoard.withNewMove(new Move(1L, Player.O, 2, 0));
         assertEquals("Should have placed O at [2,0]", Player.O, newBoard.getPlayerAtPosition(2, 0).get());
         assertEquals("X should still be at [0,2]", Player.X, newBoard.getPlayerAtPosition(0, 2).get());
     }
@@ -42,7 +42,7 @@ public class TestBoard {
     @Test
     public void testWithNewMoveFirstMove() {
         Board board = new Board();
-        Board newBoard = board.withNewMove(new Move(Player.X, 1, 1));
+        Board newBoard = board.withNewMove(new Move(1L, Player.X, 1, 1));
         assertEquals("Should have placed X at [1,1]", Player.X, newBoard.getPlayerAtPosition(1, 1).get());
     }
 
