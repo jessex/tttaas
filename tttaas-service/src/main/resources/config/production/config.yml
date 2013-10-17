@@ -1,0 +1,14 @@
+logging:
+
+  file:
+    enabled: false
+    threshold: ALL
+    archivedFileCount: 3
+    timeZone: UTC
+
+    # The file to which current statements will be logged
+    currentLogFilename: ./logs/tttaas.log
+
+    # When the log file rotates, the archived log will be renamed to this and gzipped.
+    # The %d is replaced with the previous day (yyyy-MM-dd).
+    archivedLogFilenamePattern: ./logs/tttaas-%d.log.gz
