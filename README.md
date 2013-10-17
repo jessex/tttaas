@@ -5,7 +5,7 @@ tttaas
 
 ## So what is this?
 
-This is a straight-forward [Dropwizard]("http://www.dropwizard.io/" Dropwizard) service which provides an API for playing games of tic tac toe. You can create a new game and then make moves until the game is complete. It's basically a transactional service wrapped around "business" logic, whereby "business" logic I mean the rule that three-in-a-row is a win.
+This is a straight-forward [Dropwizard](http://www.dropwizard.io/) service which provides an API for playing games of tic tac toe. You can create a new game and then make moves until the game is complete. It's basically a transactional service wrapped around "business" logic, whereby "business" logic I mean the rule that three-in-a-row is a win.
 
 ## Alright, what's the API then?
 
