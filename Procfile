@@ -1,1 +1,1 @@
-web    java $JAVA_OPTS -Ddw.http.port=$PORT -Ddw.http.adminPort=$PORT -jar tttaas-service/target/tttaas-service-0.0.1-SNAPSHOT.jar server tttaas-service/src/main/resources/config/config.yml
+web    java $JAVA_OPTS -Ddw.http.port=$PORT -Ddw.http.adminPort=$PORT -Ddw.database.user=$HEROKU_DATABASE_USERNAME -Ddb.database.password=$HEROKU_DATABASE_PASSWORD -Ddb.database.url=$HEROKU_DATABASE_URL -jar tttaas-service/target/tttaas-service-0.0.1-SNAPSHOT.jar server tttaas-service/src/main/resources/config/config.yml
